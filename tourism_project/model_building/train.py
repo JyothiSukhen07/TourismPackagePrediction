@@ -20,16 +20,15 @@ Xtest  = pd.read_csv("Xtest.csv")
 ytrain = pd.read_csv("ytrain.csv").squeeze()
 ytest  = pd.read_csv("ytest.csv").squeeze()
 
-# One-hot encode 'Type' and scale numeric features
-num_cols = [col for col in X.columns if X[col].dtype != 'O']
-cat_cols = [col for col in X.columns if X[col].dtype == 'O']
+# Define numerical and categorical columns from Xtrain
+num_cols = Xtrain.select_dtypes(include=['number']).columns.tolist()
+cat_cols = Xtrain.select_dtypes(include=['object']).columns.tolist()
 
 numeric_features = num_cols
 categorical_features = cat_cols
 
 # Set the class weight to handle class imbalance
 class_weight = ytrain.value_counts()[0] / ytrain.value_counts()[1]
-class_weight
 
 # Define the preprocessing steps
 preprocessor = make_column_transformer(
