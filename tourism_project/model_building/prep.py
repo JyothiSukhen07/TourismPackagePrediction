@@ -3,13 +3,15 @@ from sklearn.model_selection import train_test_split
 
 df = pd.read_csv("tourism_project/data/tourism.csv")
 
-# NOTE: 'Type' is intentionally left as raw strings (H/L/M).
-# The training pipeline one-hot-encodes it, and the Streamlit app also sends
-# raw H/L/M values. Encoding it here (e.g. LabelEncoder) would make training
-# and serving use different representations, silently breaking predictions.
+# Perform data cleaning steps as identified in EDA
+df.drop(['CustomerID','Unnamed: 0'],axis=1,inplace=True)
+df['Gender'] = df['Gender'].replace('Fe Male','Female')
+df['MaritalStatus'] = df['MaritalStatus'].replace(['Unmarried','Single'],'Single')
 
-X = df.drop(columns=["ProdTaken"])
-y = df["ProdTaken"]
+
+target_col = "ProdTaken"
+X = df.drop(columns=[target_col])
+y = df[target_col]
 
 # stratify=y keeps the (imbalanced) failure ratio consistent across splits
 Xtrain, Xtest, ytrain, ytest = train_test_split(
@@ -22,5 +24,3 @@ ytrain.to_csv("ytrain.csv", index=False)
 ytest.to_csv("ytest.csv", index=False)
 
 print("Data prepared: train/test splits written.")
-print("Type values kept as:", sorted(X["Type"].unique()))
-
